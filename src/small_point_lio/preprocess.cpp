@@ -25,6 +25,12 @@ namespace small_point_lio {
         filtered_points.reserve(pointcloud.size());
         for (size_t i = 0; i < pointcloud.size(); i++) {
             const auto &point = pointcloud[i];
+
+            float dist = point.position.squaredNorm(); 
+            
+            if (dist < parameters->min_distance_squared || dist > parameters->max_distance_squared) {
+                continue;
+            }
             if (point.timestamp >= last_timestamp_dense_point) {
                 dense_points.push_back(point);
             }
@@ -34,10 +40,7 @@ namespace small_point_lio {
             if (point.timestamp < last_timestamp_lidar) {
                 continue;
             }
-            float dist = point.position.squaredNorm();
-            if (dist < parameters->min_distance_squared || dist > parameters->max_distance_squared) {
-                continue;
-            }
+
             filtered_points.push_back(point);
         }
         if (parameters->space_downsample) {
