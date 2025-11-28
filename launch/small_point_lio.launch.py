@@ -5,6 +5,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+
     small_point_lio_node = Node(
         package="small_point_lio",
         executable="small_point_lio_node",
@@ -32,7 +33,7 @@ def generate_launch_description():
             "--z",
             "0.0",
             "--roll",
-            "0.0",
+            "-0.785398", 
             "--pitch",
             "0.0",
             "--yaw",

@@ -19,6 +19,7 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <small_point_lio/pch.h>
 #include <std_srvs/srv/trigger.hpp>
+#include <tf2/LinearMath/Transform.h>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_broadcaster.hpp>
 #include <tf2_ros/transform_listener.h>
@@ -39,6 +40,12 @@ namespace small_point_lio {
         std::shared_ptr<tf2_ros::TransformListener> tf_listener;
         rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr map_save_trigger;
         common::Odometry last_odometry;
+
+        // 缓存的静态外参变换（只在启动时计算一次）
+        bool extrinsic_valid_{false};
+        Eigen::Isometry3f T_lidar_to_base_{Eigen::Isometry3f::Identity()};  // 点云变换用
+        tf2::Transform tf_base_link_to_lidar_;  // TF 广播用
+        rclcpp::TimerBase::SharedPtr extrinsic_init_timer_;  // 外参初始化定时器
 
     public:
         explicit SmallPointLioNode(const rclcpp::NodeOptions &options);
